@@ -25,34 +25,9 @@ function monitorar_conectividade() {
         fi
 }
 
-
-function monitorar_disco() {
-        echo "$(date)" >> $LOG_DIR/monitoramento_disco.txt
-
-        df -h | grep -v "snapfuse" | awk '$5+0 > 70 {print $1 " está com " $5 " de uso."}' >> $LOG_DIR/monitoramento_disco.txt
-
-        echo "Uso de disco nos diretórios importantes:" >> $LOG_DIR/monitoramento_disco.txt
-        du -sh /home/gabi >> $LOG_DIR/monitoramento_disco.txt
-
-        echo "Operações de leitura e escrita em disco:" >> $LOG_DIR/monitoramento_disco.txt
-
-        iostat | grep -E "Device|^sda|^sdb|^sdc" | awk '{print $1, $2, $3, $4}' >> $LOG_DIR/monitoramento_disco.txt
-
-}
-
-function monitorar_hardware() {
-        echo "$(date):\n Uso de Memória RAM:" >> $LOG_DIR/monitoramento_hardware.txt
-        free -h | grep Mem | awk '{print "Total: " $2 ", Usada: " $3 ", Livre: " $4}' >> $LOG_DIR/monitoramento_hardware.txt
-
-        top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print "Uso da CPU: " 100 - $1 "%"}' >> $LOG_DIR/monitoramento_hardware.txt
-}
-
-
 function executar_monitoramento() {
     monitorar_logs
     monitorar_conectividade
-    monitorar_disco
-    monitorar_hardware
 }
 
 executar_monitoramento
